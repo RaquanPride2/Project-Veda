@@ -5,16 +5,21 @@ import webbrowser
 import wikipedia
 import wolframalpha
 
+
 # speech engine 
 engine = pyttsx3.init()
 voices = engine.getProperty('voices')
-engine.setProperty('voice', voices[1].id) # 0 = male #1 = female
+engine.setProperty('voice', voices[0].id) # 0 = male #1 = female
 activationWord = 'computer' # single word
+
+def speak(text, rate = 120):
+      engine.setProperty('rate', rate)
+      engine.say(text)
+      engine.runAndWait()
 
 def parseCommand():
   listener = sr.Recognizer()
   print('Waiting for request')
-
 
   with sr.Microphone() as source:
       listener.pause_threshold = 2
@@ -24,7 +29,30 @@ def parseCommand():
         print('Recognizing speech...')
         query = listener.recognize_google(input_speech, language='en_gb')
         print(f'The input speech was: {query}')
-  except Exception as exceptio:
-        print('I did not catch that')   
-        
-          
+  except Exception as exception:
+        print('I did not catch that')
+        speak('I did not catch that') 
+        print(exception)
+        return 'None'  
+
+  return query    
+
+#main loop
+if __name__ == '__main__':
+      speak('All systems normal')
+
+      while True:
+            # Parse as a list 
+            query = parseCommand().lower().split
+
+            if query[0] == activationWord:
+                  query.pop(0)
+
+                  #list comands 
+                  if query[0] == 'say':
+                        if 'hello' in query:
+                              speak('Greetings')
+                        else:
+                              query.pop(0) # remove say
+                              speech = ' '.join(query)
+                              speak(speech)
